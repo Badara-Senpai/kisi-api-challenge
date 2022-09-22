@@ -9,20 +9,20 @@ namespace(:worker) do
 
     puts("Worker starting...")
 
-    project_id = "backend-challenge-362915"
-    creds = Google::Cloud::PubSub::Credentials.new("backend-challenge-362915-1e96562be3f7.json")
-    pubsub = Google::Cloud::PubSub.new(
-      project_id: project_id,
-      credentials: creds
-    )
+    project_id = "PUBSUB_TEST_PROJECT"
+    pubsub = Google::Cloud::PubSub.new(project_id: project_id)
 
-    sub = pubsub.subscription("my-topic-sub")
+    sub = pubsub.subscription("SUBSCRIPTION1")
 
     subscriber = sub.listen do |received_message|
+      puts("------------ Data start -----------")
+      puts(received_message.message.data)
+      puts("------------ Data end -----------")
+
       puts("Message was received. Data: #{received_message.message.data}, published at #{received_message.message.published_at}")
 
-      # process message
-      received_message.message.data.constantize.perform_now
+      ActiveJob::Base.execute(JSON.parse(received_message.message.data))
+
       received_message.acknowledge!
     rescue StandardError => e
       puts("Error: Failed to create the job name: #{e.message}")

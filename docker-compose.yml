@@ -29,3 +29,5 @@ services:
     image: messagebird/gcloud-pubsub-emulator:latest
     ports:
       - "8681:8681"
+    environment:
+      - PUBSUB_PROJECT1=PUBSUB_TEST_PROJECT,TOPIC1:SUBSCRIPTION1
