@@ -9,6 +9,19 @@ This repository contains:
 - A class ([lib/pubsub.rb](lib/pubsub.rb)) that wraps the GCP Pub/Sub client. Use as as a starting point for your own code.
 - A [Dockerfile](Dockerfile) and a [docker-compose.yml](docker-compose.yml) configured to spin up necessary services (web server, worker, pub/sub emulator).
 
+## Using Pub/Sub emulator
+
+A pre-built Docker container is available for Docker Hub and is settled in the docker compose file where you can provide the name of your projects, topics and subscriptions.
+[Example](https://github.com/marcelcorso/gcloud-pubsub-emulator) 👇
+```
+  pubsub:
+    image: messagebird/gcloud-pubsub-emulator:latest
+    ports:
+      - "8681:8681"
+    environment:
+      - PUBSUB_PROJECT1=PUBSUB_TEST_PROJECT,TOPIC1:SUBSCRIPTION1
+````
+
 To start all services, make sure you have [Docker](https://www.docker.com/products/docker-desktop/) installed and run:
 ```
 $ docker compose up
@@ -25,3 +38,9 @@ $ docker compose run --rm web bin/rails console
 ```
 
 If you run docker with a VM (e.g. Docker Desktop for Mac) we recommend you allocate at least 2GB Memory
+
+## Enqueue a job
+
+```ruby
+  DummyJob.perform_later(args) # enqueue the job to pub/sub and execute it once the pub/sub subscriber receives the job.
+ ```
